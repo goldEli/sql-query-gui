@@ -28,7 +28,7 @@ const SelectValue: React.FC<SelectValueProps> = (props) => {
     <>
       <span onClick={() => setVisible(true)}>{props.value || "<?>"}</span>
       <Modal
-        title="请输入"
+        title="请选择"
         visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}

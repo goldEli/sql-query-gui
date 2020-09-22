@@ -13,7 +13,10 @@ enum UI_TYPE {
   input,
   time,
   comparisonPperators,
-  logicalOperators
+  logicalOperators,
+  addBtn,
+  delBtn,
+  addParenBtn
 }
 
 type UI_TYPE_KEY = keyof typeof UI_TYPE;
@@ -31,9 +34,14 @@ const SwitchItemUI = (props: {
 }) => {
   const { item } = props;
   switch (item.uiType) {
+    case "addBtn":
+      return <Btn>+</Btn>;
+    case "delBtn":
+      return <Btn>-</Btn>;
+    case "addParenBtn":
+      return <Btn>( )</Btn>;
     case "comparisonPperators":
       return <span>大于</span>;
-
     case "input":
       return <InputValue onChange={props.onChange} value={item.value} />;
     case "leftParen":
@@ -58,8 +66,10 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   React.useEffect(() => {
     setData([
-      [{ uiType: "leftParen" }],
+      [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
+      [{ uiType: "delBtn" }, { uiType: "leftParen" }],
       [
+        { uiType: "delBtn" },
         { uiType: "space", value: 2 },
         { uiType: "select", value: "age" },
         { uiType: "comparisonPperators", value: "包含" },
@@ -68,13 +78,14 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         // { uiType: "time" }
       ],
       [
+        { uiType: "delBtn" },
         { uiType: "space", value: 2 },
         { uiType: "select", value: "time" },
         { uiType: "comparisonPperators", value: "晚于" },
         { uiType: "time" },
         { uiType: "logicalOperators", value: "与" }
       ],
-      [{ uiType: "rightParen" }]
+      [{ uiType: "delBtn" }, { uiType: "rightParen" }]
     ]);
   }, []);
 
@@ -119,6 +130,17 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   );
 };
 
+const Btn = styled.span`
+  display: inline-block;
+  width: 16px;
+  border-radius: 4px;
+  background-color: #bbb8b8;
+  color: #fff;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+`;
+
 const Box = styled.div`
   width: 100%;
   min-height: 300px;
@@ -132,7 +154,7 @@ const Spacer = styled.span`
 
 const Row = styled.div`
   width: 100%;
-  height: 20px;
+  height: 30px;
   display: flex;
   flex-direction: row;
   align-items: center;
