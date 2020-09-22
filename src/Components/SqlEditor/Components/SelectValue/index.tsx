@@ -34,7 +34,9 @@ const SelectValue: React.FC<SelectValueProps> = (props) => {
 
   return (
     <>
-      <span onClick={() => setVisible(true)}>{props.value || "<?>"}</span>
+      <span style={{ fontWeight: "bold" }} onClick={() => setVisible(true)}>
+        {props.value || "<?>"}
+      </span>
       <Modal
         title="请选择"
         visible={visible}

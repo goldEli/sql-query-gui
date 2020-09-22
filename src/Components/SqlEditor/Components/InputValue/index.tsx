@@ -25,7 +25,9 @@ const InputValue: React.FC<InputValueProps> = (props) => {
 
   return (
     <>
-      <span onClick={() => setVisible(true)}>{props.value || "<?>"}</span>
+      <span style={{ fontWeight: "bold" }} onClick={() => setVisible(true)}>
+        {props.value || "<?>"}
+      </span>
       <Modal
         title="请输入"
         visible={visible}

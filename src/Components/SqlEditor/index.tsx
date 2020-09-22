@@ -175,10 +175,71 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     };
   };
 
+  const isLeftParan = (item: Item[]) => {
+    return item.some((e) => e.uiType === "leftParen");
+  };
+
+  const isRightParan = (item: Item[]) => {
+    return item.some((e) => e.uiType === "rightParen");
+  };
+
   const delRow = (rowNum: number) => {
     return () => {
       setData((data) => {
         const curRow = data[rowNum];
+        const leftParen = isLeftParan(curRow);
+        const rightParen = isRightParan(curRow);
+        const isOnlyOneInParen =
+          isLeftParan(data[rowNum - 1]) && isRightParan(data[rowNum + 1]);
+
+        if (isOnlyOneInParen) {
+          return data.filter(
+            (row, index) => ![rowNum, rowNum + 1, rowNum - 1].includes(index)
+          );
+        }
+
+        if (leftParen) {
+          let parenNum = 0;
+          return data.filter((row, index) => {
+            if (index === rowNum) {
+              parenNum += 1;
+              return false;
+            }
+            if (isLeftParan(row) && parenNum > 0) {
+              parenNum += 1;
+              return false;
+            }
+            if (isRightParan(row) && parenNum > 0) {
+              parenNum -= 1;
+              return false;
+            }
+            return parenNum === 0;
+          });
+        }
+
+        if (rightParen) {
+          let parenNum = 0;
+          return data
+            .slice()
+            .reverse()
+            .filter((row, index) => {
+              if (index === data.length - 1 - rowNum) {
+                parenNum += 1;
+                return false;
+              }
+              if (isRightParan(row) && parenNum > 0) {
+                parenNum += 1;
+                return false;
+              }
+              if (isLeftParan(row) && parenNum > 0) {
+                parenNum -= 1;
+                return false;
+              }
+              return parenNum === 0;
+            })
+            .reverse();
+        }
+
         return data.filter((row, index) => index !== rowNum);
       });
     };
@@ -250,7 +311,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         const dataType = getFieldType(comment, defaultSelectData);
         const spacerNum = calSpacerNum(row);
         return (
-          <Row>
+          <Row key={rowNum.toString()}>
             <Spacer num={spacerNum} />
             <>
               {row.map((col, colNum) => {
