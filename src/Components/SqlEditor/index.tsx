@@ -82,6 +82,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     onChange: (value: string) => void;
     addRow: () => void;
     delRow: () => void;
+    addParen: () => void;
   }) => {
     const { item } = props;
     switch (item.uiType) {
@@ -90,7 +91,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       case "delBtn":
         return <Btn onClick={props.delRow}>-</Btn>;
       case "addParenBtn":
-        return <Btn>( )</Btn>;
+        return <Btn onClick={props.addParen}>( )</Btn>;
       case "comparisonPperators":
         return (
           <ComparisonOperators
@@ -202,6 +203,28 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     };
   };
 
+  const addParen = (rowNum: number) => {
+    return () => {
+      setData((data) => {
+        const curRow = data[rowNum];
+        return [
+          ...data.slice(0, rowNum + 1),
+          [{ uiType: "leftParen" }, ...btnsData],
+          [
+            { uiType: "select", value: "" },
+            { uiType: "comparisonPperators", value: "" },
+            { uiType: "input", value: "" },
+            { uiType: "logicalOperators", value: "" },
+
+            ...btnsData
+          ],
+          [{ uiType: "rightParen" }, ...btnsData],
+          ...data.slice(rowNum + 1, data.length)
+        ];
+      });
+    };
+  };
+
   let leftParenNum = 0;
 
   const calSpacerNum = (item: Item[]): number => {
@@ -239,6 +262,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                       onChange={onChange(rowNum, colNum)}
                       addRow={addRow(rowNum)}
                       delRow={delRow(rowNum)}
+                      addParen={addParen(rowNum)}
                       dataType={dataType}
                     />
                     <Spacer num={1} />
