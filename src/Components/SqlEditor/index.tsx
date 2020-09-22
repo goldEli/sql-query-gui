@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import InputValue from "./Components/InputValue";
 import SelectValue from "./Components/SelectValue";
+import LogicalOperators from "./Components/LogicalOperators";
 
 interface SqlEditorProps {}
 
@@ -93,7 +94,9 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       case "rightParen":
         return <span>)</span>;
       case "logicalOperators":
-        return <span>{item.value}</span>;
+        return (
+          <LogicalOperators onChange={props.onChange} value={item.value} />
+        );
       case "select":
         return <SelectValue onChange={props.onChange} value={item.value} />;
       case "time":
@@ -182,7 +185,7 @@ const Btn = styled.span`
   display: inline-block;
   width: 16px;
   border-radius: 4px;
-  background-color: #bbb8b8;
+  background-color: #e2e2e2;
   color: #fff;
   text-align: center;
   line-height: 20px;
