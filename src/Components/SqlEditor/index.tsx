@@ -305,35 +305,37 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <Box>
-      {data.map((row, rowNum) => {
-        const comment = row.find((item) => item.uiType === "select")?.value;
+      <>
+        {data.map((row, rowNum) => {
+          const comment = row.find((item) => item.uiType === "select")?.value;
 
-        const dataType = getFieldType(comment, defaultSelectData);
-        const spacerNum = calSpacerNum(row);
-        return (
-          <Row key={rowNum.toString()}>
-            <Spacer num={spacerNum} />
-            <>
-              {row.map((col, colNum) => {
-                return (
-                  <>
-                    <SwitchItemUI
-                      key={colNum.toString()}
-                      item={col}
-                      onChange={onChange(rowNum, colNum)}
-                      addRow={addRow(rowNum)}
-                      delRow={delRow(rowNum)}
-                      addParen={addParen(rowNum)}
-                      dataType={dataType}
-                    />
-                    <Spacer num={1} />
-                  </>
-                );
-              })}
-            </>
-          </Row>
-        );
-      })}
+          const dataType = getFieldType(comment, defaultSelectData);
+          const spacerNum = calSpacerNum(row);
+          return (
+            <Row key={rowNum.toString()}>
+              <Spacer num={spacerNum} />
+              <>
+                {row.map((col, colNum) => {
+                  return (
+                    <>
+                      <SwitchItemUI
+                        key={colNum.toString()}
+                        item={col}
+                        onChange={onChange(rowNum, colNum)}
+                        addRow={addRow(rowNum)}
+                        delRow={delRow(rowNum)}
+                        addParen={addParen(rowNum)}
+                        dataType={dataType}
+                      />
+                      <Spacer num={1} />
+                    </>
+                  );
+                })}
+              </>
+            </Row>
+          );
+        })}
+      </>
     </Box>
   );
 };
@@ -347,6 +349,7 @@ const Btn = styled.span`
   text-align: center;
   line-height: 20px;
   cursor: pointer;
+  visibility: hidden;
 `;
 
 const Box = styled.div`
@@ -367,6 +370,9 @@ const Row = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  &:hover ${Btn} {
+    visibility: visible;
+  }
 `;
 
 const defaultSelectData = [
