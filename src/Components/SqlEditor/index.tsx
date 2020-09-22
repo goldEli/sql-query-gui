@@ -28,66 +28,81 @@ interface Item {
 
 type Data = Item[][];
 
-const SwitchItemUI = (props: {
-  item: Item;
-  onChange: (value: string) => void;
-}) => {
-  const { item } = props;
-  switch (item.uiType) {
-    case "addBtn":
-      return <Btn>+</Btn>;
-    case "delBtn":
-      return <Btn>-</Btn>;
-    case "addParenBtn":
-      return <Btn>( )</Btn>;
-    case "comparisonPperators":
-      return <span>大于</span>;
-    case "input":
-      return <InputValue onChange={props.onChange} value={item.value} />;
-    case "leftParen":
-      return <span>(</span>;
-    case "rightParen":
-      return <span>)</span>;
-    case "logicalOperators":
-      return <span>{item.value}</span>;
-    case "select":
-      return <SelectValue onChange={props.onChange} value={item.value} />;
-    case "time":
-      return <span>2019-12-10</span>;
-    case "space":
-      return <Spacer num={item.value} />;
-    default:
-      return <div>no ui</div>;
-  }
-};
+const defaultData = [
+  [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
+  [{ uiType: "leftParen" }],
+  [
+    { uiType: "space", value: 2 },
+    { uiType: "select", value: "age" },
+    { uiType: "comparisonPperators", value: "包含" },
+    { uiType: "input" },
+    { uiType: "logicalOperators", value: "与" }
+    // { uiType: "time" }
+  ],
+  [
+    { uiType: "space", value: 2 },
+    { uiType: "select", value: "time" },
+    { uiType: "comparisonPperators", value: "晚于" },
+    { uiType: "time" },
+    { uiType: "logicalOperators", value: "与" }
+  ],
+  [{ uiType: "rightParen" }]
+];
 
 const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const [data, setData] = React.useState<Data>([]);
 
   React.useEffect(() => {
-    setData([
-      [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
-      [{ uiType: "delBtn" }, { uiType: "leftParen" }],
-      [
-        { uiType: "delBtn" },
-        { uiType: "space", value: 2 },
-        { uiType: "select", value: "age" },
-        { uiType: "comparisonPperators", value: "包含" },
-        { uiType: "input" },
-        { uiType: "logicalOperators", value: "与" }
-        // { uiType: "time" }
-      ],
-      [
-        { uiType: "delBtn" },
-        { uiType: "space", value: 2 },
-        { uiType: "select", value: "time" },
-        { uiType: "comparisonPperators", value: "晚于" },
-        { uiType: "time" },
-        { uiType: "logicalOperators", value: "与" }
-      ],
-      [{ uiType: "delBtn" }, { uiType: "rightParen" }]
-    ]);
+    setData(addBtnInfo(defaultData));
   }, []);
+
+  const addBtnInfo = (data: Data): data => {
+    return data.map((row, index) => {
+      if (index === 0) {
+        return row;
+      }
+      return [
+        { uiType: "delBtn" },
+        { uiType: "addBtn" },
+        { uiType: "addParenBtn" },
+        ...row
+      ];
+    });
+  };
+
+  const SwitchItemUI = (props: {
+    item: Item;
+    onChange: (value: string) => void;
+    addRow: () => void;
+  }) => {
+    const { item } = props;
+    switch (item.uiType) {
+      case "addBtn":
+        return <Btn onClick={props.addRow}>+</Btn>;
+      case "delBtn":
+        return <Btn>-</Btn>;
+      case "addParenBtn":
+        return <Btn>( )</Btn>;
+      case "comparisonPperators":
+        return <span>大于</span>;
+      case "input":
+        return <InputValue onChange={props.onChange} value={item.value} />;
+      case "leftParen":
+        return <span>(</span>;
+      case "rightParen":
+        return <span>)</span>;
+      case "logicalOperators":
+        return <span>{item.value}</span>;
+      case "select":
+        return <SelectValue onChange={props.onChange} value={item.value} />;
+      case "time":
+        return <span>2019-12-10</span>;
+      case "space":
+        return <Spacer num={item.value} />;
+      default:
+        return <div>no ui</div>;
+    }
+  };
 
   const onChange = (rowNum: number, colNum: number) => {
     return (value: string) => {
@@ -107,6 +122,27 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     };
   };
 
+  const addRow = (rowNum: number) => {
+    return () => {
+      setData((data) => {
+        const curRow = data[rowNum];
+        return [
+          ...data.slice(0, rowNum + 1),
+          [
+            { uiType: "delBtn" },
+            { uiType: "addBtn" },
+            { uiType: "addParenBtn" },
+            { uiType: "select", value: "" },
+            { uiType: "comparisonPperators", value: "" },
+            { uiType: "time", value: "" },
+            { uiType: "logicalOperators", value: "" }
+          ],
+          ...data.slice(rowNum + 1, data.length)
+        ];
+      });
+    };
+  };
+
   return (
     <Box>
       {data.map((row, rowNum) => {
@@ -118,6 +154,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                   <SwitchItemUI
                     item={col}
                     onChange={onChange(rowNum, colNum)}
+                    addRow={addRow(rowNum)}
                   />
                   <Spacer num={1} />
                 </>
