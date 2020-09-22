@@ -1,16 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-import { Select, Input } from "antd";
-
-const { Option } = Select;
+import InputValue from "./Components/InputValue";
 
 interface SqlEditorProps {}
 
 enum UI_TYPE {
   leftParen,
   rightParen,
-  sapce,
-  selet,
+  space,
+  select,
   input,
   time,
   comparisonPperators,
@@ -21,7 +19,7 @@ type UI_TYPE_KEY = keyof typeof UI_TYPE;
 
 interface Item {
   uiType: UI_TYPE_KEY;
-  value?: string;
+  value?: string | number;
 }
 
 type Data = Item[][];
@@ -32,7 +30,7 @@ const switchItemUI = (item: Item) => {
       return <span>大于</span>;
 
     case "input":
-      return <span>123</span>;
+      return <InputValue value={item.value} />;
     case "leftParen":
       return <span>(</span>;
     case "rightParen":
@@ -103,7 +101,7 @@ const Box = styled.div`
 
 const Spacer = styled.span`
   display: inline-block;
-  width: ${(props) => (props.num || 0) * 8}px;
+  width: ${(props: { num: number }) => (props.num || 0) * 8}px;
 `;
 
 const Row = styled.div`
