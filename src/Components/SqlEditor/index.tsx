@@ -24,13 +24,17 @@ interface Item {
 
 type Data = Item[][];
 
-const switchItemUI = (item: Item) => {
+const SwitchItemUI = (props: {
+  item: Item;
+  onChange: (value: string) => void;
+}) => {
+  const { item } = props;
   switch (item.uiType) {
     case "comparisonPperators":
       return <span>大于</span>;
 
     case "input":
-      return <InputValue value={item.value} />;
+      return <InputValue onChange={props.onChange} value={item.value} />;
     case "leftParen":
       return <span>(</span>;
     case "rightParen":
@@ -73,15 +77,36 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     ]);
   }, []);
 
+  const onChange = (rowNum: number, colNum: number) => {
+    return (value: string) => {
+      setData((data) => {
+        return data.map((row, r) => {
+          if (rowNum === r) {
+            return row.map((col, c) => {
+              if (colNum === c) {
+                return { ...col, value };
+              }
+              return col;
+            });
+          }
+          return row;
+        });
+      });
+    };
+  };
+
   return (
     <Box>
-      {data.map((row) => {
+      {data.map((row, rowNum) => {
         return (
           <Row>
-            {row.map((col) => {
+            {row.map((col, colNum) => {
               return (
                 <>
-                  {switchItemUI(col)}
+                  <SwitchItemUI
+                    item={col}
+                    onChange={onChange(rowNum, colNum)}
+                  />
                   <Spacer num={1} />
                 </>
               );

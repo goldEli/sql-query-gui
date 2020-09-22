@@ -3,12 +3,19 @@ import { Modal, Input } from "antd";
 
 interface InputValueProps {
   value?: string;
+  onChange: (value: string) => void;
 }
 
 const InputValue: React.FC<InputValueProps> = (props) => {
   const [visible, setVisible] = React.useState(false);
+  const [value, setValue] = React.useState("");
+
+  React.useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
 
   const handleOk = () => {
+    props.onChange(value);
     setVisible(false);
   };
 
@@ -25,7 +32,11 @@ const InputValue: React.FC<InputValueProps> = (props) => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Input autoFocus defaultValue={props.value} />
+        <Input
+          onChange={(e) => setValue(e.target.value)}
+          autoFocus
+          value={value}
+        />
       </Modal>
     </>
   );
