@@ -1,14 +1,14 @@
 import React from "react";
+import { logicalOperatorsList } from "../../config";
 
 interface LogicalOperatorsProps {
   value?: string;
   onChange: (value: string) => void;
 }
 
-const data = ["与", "或"];
+const data = Object.values(logicalOperatorsList);
 
 const LogicalOperators: React.FC<LogicalOperatorsProps> = (props) => {
-  const [visible, setVisible] = React.useState(false);
   const [value, setValue] = React.useState(data[0]);
 
   React.useEffect(() => {
@@ -18,15 +18,6 @@ const LogicalOperators: React.FC<LogicalOperatorsProps> = (props) => {
       setValue(props.value);
     }
   }, [props.value]);
-
-  const handleOk = () => {
-    props.onChange(value);
-    setVisible(false);
-  };
-
-  // const handleCancel = () => {
-  //   setVisible(false);
-  // };
 
   return (
     <>
