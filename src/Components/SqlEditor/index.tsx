@@ -38,15 +38,12 @@ const defaultData = [
   [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
   [{ uiType: "leftParen" }],
   [
-    { uiType: "space", value: 2 },
     { uiType: "select", value: "" },
     { uiType: "comparisonPperators", value: "" },
     { uiType: "input" },
     { uiType: "logicalOperators", value: "" }
-    // { uiType: "time" }
   ],
   [
-    { uiType: "space", value: 2 },
     { uiType: "select", value: "" },
     { uiType: "comparisonPperators", value: "" },
     { uiType: "time" },
@@ -54,6 +51,14 @@ const defaultData = [
   ],
   [{ uiType: "rightParen" }]
 ];
+
+const btnsData = [
+  { uiType: "delBtn" },
+  { uiType: "addBtn" },
+  { uiType: "addParenBtn" }
+];
+
+const tabNum = 2;
 
 const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const [data, setData] = React.useState<Data>([]);
@@ -67,12 +72,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       if (index === 0) {
         return row;
       }
-      return [
-        { uiType: "delBtn" },
-        { uiType: "addBtn" },
-        { uiType: "addParenBtn" },
-        ...row
-      ];
+      return [...row, ...btnsData];
     });
   };
 
@@ -190,18 +190,33 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         return [
           ...data.slice(0, rowNum + 1),
           [
-            { uiType: "delBtn" },
-            { uiType: "addBtn" },
-            { uiType: "addParenBtn" },
             { uiType: "select", value: "" },
             { uiType: "comparisonPperators", value: "" },
-            { uiType: "time", value: "" },
-            { uiType: "logicalOperators", value: "" }
+            { uiType: "input", value: "" },
+            { uiType: "logicalOperators", value: "" },
+            ...btnsData
           ],
           ...data.slice(rowNum + 1, data.length)
         ];
       });
     };
+  };
+
+  let leftParenNum = 0;
+
+  const calSpacerNum = (item: Item[]): number => {
+    if (item.some((e) => e.uiType === "leftParen")) {
+      leftParenNum += 1;
+      return tabNum * (leftParenNum - 1);
+    }
+    if (item.some((e) => e.uiType === "rightParen")) {
+      leftParenNum -= 1;
+    }
+    if (leftParenNum > 0) {
+      return tabNum * leftParenNum;
+    }
+
+    return 0;
   };
 
   return (
@@ -210,22 +225,27 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         const comment = row.find((item) => item.uiType === "select")?.value;
 
         const dataType = getFieldType(comment, defaultSelectData);
+        const spacerNum = calSpacerNum(row);
         return (
           <Row>
-            {row.map((col, colNum) => {
-              return (
-                <>
-                  <SwitchItemUI
-                    item={col}
-                    onChange={onChange(rowNum, colNum)}
-                    addRow={addRow(rowNum)}
-                    delRow={delRow(rowNum)}
-                    dataType={dataType}
-                  />
-                  <Spacer num={1} />
-                </>
-              );
-            })}
+            <Spacer num={spacerNum} />
+            <>
+              {row.map((col, colNum) => {
+                return (
+                  <>
+                    <SwitchItemUI
+                      key={colNum.toString()}
+                      item={col}
+                      onChange={onChange(rowNum, colNum)}
+                      addRow={addRow(rowNum)}
+                      delRow={delRow(rowNum)}
+                      dataType={dataType}
+                    />
+                    <Spacer num={1} />
+                  </>
+                );
+              })}
+            </>
           </Row>
         );
       })}
