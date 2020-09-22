@@ -1,2 +1,1 @@
-# sql-query-gui
-Created with CodeSandbox
+### Sql Query GUI
