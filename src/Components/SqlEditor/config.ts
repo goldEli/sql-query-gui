@@ -5,6 +5,29 @@ export const logicalOperatorsList = {
   or: "或"
 };
 
+export enum IntsKeys {
+  "double",
+  "long",
+  "integer",
+  "float",
+  "short",
+  "int",
+  "bigdecimal",
+  "decimal"
+}
+
+export enum StringsKeys {
+  "byte",
+  "string"
+}
+
+export enum TimesKeys {
+  "date",
+  "datetime",
+  "timestamp",
+  "time"
+}
+
 export const comparisonPperatorsList = {
   int: [
     { id: "<=", label: "小于等于" },

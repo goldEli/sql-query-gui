@@ -3,8 +3,11 @@ import styled from "styled-components";
 import InputValue from "./Components/InputValue";
 import SelectValue from "./Components/SelectValue";
 import LogicalOperators from "./Components/LogicalOperators";
+import ComparisonOperators from "./Components/ComparisonOperators";
+import { comparisonPperatorsList } from "./config";
 
-import { DataType, IntsKeys, StringsKeys, TimesKeys } from "./type";
+import { DataType } from "./type";
+import { IntsKeys, StringsKeys, TimesKeys } from "./config";
 
 interface SqlEditorProps {}
 
@@ -37,17 +40,17 @@ const defaultData = [
   [
     { uiType: "space", value: 2 },
     { uiType: "select", value: "" },
-    { uiType: "comparisonPperators", value: "包含" },
+    { uiType: "comparisonPperators", value: "" },
     { uiType: "input" },
-    { uiType: "logicalOperators", value: "与" }
+    { uiType: "logicalOperators", value: "" }
     // { uiType: "time" }
   ],
   [
     { uiType: "space", value: 2 },
     { uiType: "select", value: "" },
-    { uiType: "comparisonPperators", value: "晚于" },
+    { uiType: "comparisonPperators", value: "" },
     { uiType: "time" },
-    { uiType: "logicalOperators", value: "与" }
+    { uiType: "logicalOperators", value: "" }
   ],
   [{ uiType: "rightParen" }]
 ];
@@ -59,7 +62,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     setData(addBtnInfo(defaultData));
   }, []);
 
-  const addBtnInfo = (data: Data): data => {
+  const addBtnInfo = (data: Data): Data => {
     return data.map((row, index) => {
       if (index === 0) {
         return row;
@@ -89,7 +92,19 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       case "addParenBtn":
         return <Btn>( )</Btn>;
       case "comparisonPperators":
-        return <span>大于</span>;
+        return (
+          <ComparisonOperators
+            // dataType={props.dataType}
+            list={
+              comparisonPperatorsList[props.dataType]?.map(
+                (item) => item.label
+              ) || []
+            }
+            onChange={props.onChange}
+            value={item.value}
+          />
+        );
+
       case "input":
         return <InputValue onChange={props.onChange} value={item.value} />;
       case "leftParen":
@@ -126,7 +141,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
     for (let item of fieldData) {
       if (item.comment === comment) {
-        const type = item.dataType;
+        const type = item.dataType.toLocaleLowerCase();
         if (Object.values(IntsKeys).includes(type)) {
           return "int";
         }
