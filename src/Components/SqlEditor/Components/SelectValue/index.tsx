@@ -1,12 +1,13 @@
 import React from "react";
-import { Modal, Input } from "antd";
+import { Modal, Select } from "antd";
+const { Option } = Select;
 
-interface InputValueProps {
+interface SelectValueProps {
   value?: string;
   onChange: (value: string) => void;
 }
 
-const InputValue: React.FC<InputValueProps> = (props) => {
+const SelectValue: React.FC<SelectValueProps> = (props) => {
   const [visible, setVisible] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -32,14 +33,19 @@ const InputValue: React.FC<InputValueProps> = (props) => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Input
-          onChange={(e) => setValue(e.target.value)}
+        <Select
+          style={{ width: "200px" }}
+          showSearch
           autoFocus
           value={value}
-        />
+          onChange={(value) => setValue(value)}
+        >
+          <Option value="jack">Jack</Option>
+          <Option value="lucy">Lucy</Option>
+        </Select>
       </Modal>
     </>
   );
 };
 
-export default InputValue;
+export default SelectValue;

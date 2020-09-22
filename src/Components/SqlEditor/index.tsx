@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import InputValue from "./Components/InputValue";
+import SelectValue from "./Components/SelectValue";
 
 interface SqlEditorProps {}
 
@@ -42,7 +43,7 @@ const SwitchItemUI = (props: {
     case "logicalOperators":
       return <span>{item.value}</span>;
     case "select":
-      return <span>{item.value}</span>;
+      return <SelectValue onChange={props.onChange} value={item.value} />;
     case "time":
       return <span>2019-12-10</span>;
     case "space":
