@@ -74,13 +74,14 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     item: Item;
     onChange: (value: string) => void;
     addRow: () => void;
+    delRow: () => void;
   }) => {
     const { item } = props;
     switch (item.uiType) {
       case "addBtn":
         return <Btn onClick={props.addRow}>+</Btn>;
       case "delBtn":
-        return <Btn>-</Btn>;
+        return <Btn onClick={props.delRow}>-</Btn>;
       case "addParenBtn":
         return <Btn>( )</Btn>;
       case "comparisonPperators":
@@ -122,6 +123,15 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     };
   };
 
+  const delRow = (rowNum: number) => {
+    return () => {
+      setData((data) => {
+        const curRow = data[rowNum];
+        return data.filter((row, index) => index !== rowNum);
+      });
+    };
+  };
+
   const addRow = (rowNum: number) => {
     return () => {
       setData((data) => {
@@ -155,6 +165,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                     item={col}
                     onChange={onChange(rowNum, colNum)}
                     addRow={addRow(rowNum)}
+                    delRow={delRow(rowNum)}
                   />
                   <Spacer num={1} />
                 </>
