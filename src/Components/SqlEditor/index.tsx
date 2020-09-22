@@ -4,6 +4,8 @@ import InputValue from "./Components/InputValue";
 import SelectValue from "./Components/SelectValue";
 import LogicalOperators from "./Components/LogicalOperators";
 
+import { DataType, IntsKeys, StringsKeys, TimesKeys } from "./type";
+
 interface SqlEditorProps {}
 
 enum UI_TYPE {
@@ -34,7 +36,7 @@ const defaultData = [
   [{ uiType: "leftParen" }],
   [
     { uiType: "space", value: 2 },
-    { uiType: "select", value: "age" },
+    { uiType: "select", value: "" },
     { uiType: "comparisonPperators", value: "包含" },
     { uiType: "input" },
     { uiType: "logicalOperators", value: "与" }
@@ -42,7 +44,7 @@ const defaultData = [
   ],
   [
     { uiType: "space", value: 2 },
-    { uiType: "select", value: "time" },
+    { uiType: "select", value: "" },
     { uiType: "comparisonPperators", value: "晚于" },
     { uiType: "time" },
     { uiType: "logicalOperators", value: "与" }
@@ -73,6 +75,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const SwitchItemUI = (props: {
     item: Item;
+    dataType?: DataType;
     onChange: (value: string) => void;
     addRow: () => void;
     delRow: () => void;
@@ -98,7 +101,13 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           <LogicalOperators onChange={props.onChange} value={item.value} />
         );
       case "select":
-        return <SelectValue onChange={props.onChange} value={item.value} />;
+        return (
+          <SelectValue
+            list={defaultSelectData.map((item) => item.comment)}
+            onChange={props.onChange}
+            value={item.value}
+          />
+        );
       case "time":
         return <span>2019-12-10</span>;
       case "space":
@@ -106,6 +115,30 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       default:
         return <div>no ui</div>;
     }
+  };
+
+  const getFieldType = (
+    comment?: string,
+    fieldData: typeof defaultSelectData
+  ): DataType | undefined => {
+    if (!comment) return void 0;
+    // comment = comment.toLocaleLowerCase()
+
+    for (let item of fieldData) {
+      if (item.comment === comment) {
+        const type = item.dataType;
+        if (Object.values(IntsKeys).includes(type)) {
+          return "int";
+        }
+        if (Object.values(StringsKeys).includes(type)) {
+          return "string";
+        }
+        if (Object.values(TimesKeys).includes(type)) {
+          return "time";
+        }
+      }
+    }
+    return void 0;
   };
 
   const onChange = (rowNum: number, colNum: number) => {
@@ -159,6 +192,9 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   return (
     <Box>
       {data.map((row, rowNum) => {
+        const comment = row.find((item) => item.uiType === "select")?.value;
+
+        const dataType = getFieldType(comment, defaultSelectData);
         return (
           <Row>
             {row.map((col, colNum) => {
@@ -169,6 +205,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                     onChange={onChange(rowNum, colNum)}
                     addRow={addRow(rowNum)}
                     delRow={delRow(rowNum)}
+                    dataType={dataType}
                   />
                   <Spacer num={1} />
                 </>
@@ -211,5 +248,88 @@ const Row = styled.div`
   align-items: center;
   justify-content: flex-start;
 `;
+
+const defaultSelectData = [
+  {
+    name: "id",
+    dataType: "String",
+    portName: "dataset",
+    alias: "id",
+    selected: false,
+    comment: "组件ID"
+  },
+  {
+    name: "code",
+    dataType: "String",
+    portName: "dataset",
+    alias: "code",
+    selected: false,
+    comment: "算法编码"
+  },
+  {
+    name: "grp_id",
+    dataType: "String",
+    portName: "dataset",
+    alias: "grp_id",
+    selected: false,
+    comment: "组件属于的分组ID"
+  },
+  {
+    name: "name",
+    dataType: "String",
+    portName: "dataset",
+    alias: "name",
+    selected: false,
+    comment: "组件名称"
+  },
+  {
+    name: "sort_type",
+    dataType: "String",
+    portName: "dataset",
+    alias: "sort_type",
+    selected: false,
+    comment: "算法分类"
+  },
+  {
+    name: "data",
+    dataType: "String",
+    portName: "dataset",
+    alias: "data",
+    selected: false,
+    comment: "算法json参数"
+  },
+  {
+    name: "description",
+    dataType: "String",
+    portName: "dataset",
+    alias: "description",
+    selected: false,
+    comment: "组件简单描述"
+  },
+  {
+    name: "create_time",
+    dataType: "DateTime",
+    portName: "dataset",
+    alias: "create_time",
+    selected: false,
+    comment: "创建时间"
+  },
+  {
+    name: "user_id",
+    dataType: "String",
+    portName: "dataset",
+    alias: "user_id",
+    selected: false,
+    comment: "用户id"
+  },
+  {
+    name: "update_time",
+    dataType: "DateTime",
+    portName: "dataset",
+    alias: "update_time",
+    selected: false,
+    comment: "更新时间"
+  }
+];
 
 export default SqlEditor;
