@@ -4,6 +4,8 @@ import InputValue from "./Components/InputValue";
 import SelectValue from "./Components/SelectValue";
 import LogicalOperators from "./Components/LogicalOperators";
 import ComparisonOperators from "./Components/ComparisonOperators";
+import SelectTime from "./Components/SelectTime";
+
 import { comparisonPperatorsList } from "./config";
 
 import { DataType } from "./type";
@@ -17,6 +19,7 @@ enum UI_TYPE {
   space,
   select,
   input,
+  condition,
   time,
   comparisonPperators,
   logicalOperators,
@@ -40,13 +43,13 @@ const defaultData = [
   [
     { uiType: "select", value: "" },
     { uiType: "comparisonPperators", value: "" },
-    { uiType: "input" },
+    { uiType: "condition" },
     { uiType: "logicalOperators", value: "" }
   ],
   [
     { uiType: "select", value: "" },
     { uiType: "comparisonPperators", value: "" },
-    { uiType: "time" },
+    { uiType: "condition" },
     { uiType: "logicalOperators", value: "" }
   ],
   [{ uiType: "rightParen" }]
@@ -106,7 +109,10 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           />
         );
 
-      case "input":
+      case "condition":
+        if (props.dataType === "time") {
+          return <SelectTime onChange={props.onChange} value={item.value} />;
+        }
         return <InputValue onChange={props.onChange} value={item.value} />;
       case "leftParen":
         return <span>(</span>;
@@ -124,8 +130,6 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
             value={item.value}
           />
         );
-      case "time":
-        return <span>2019-12-10</span>;
       case "space":
         return <Spacer num={item.value} />;
       default:
@@ -254,7 +258,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           [
             { uiType: "select", value: "" },
             { uiType: "comparisonPperators", value: "" },
-            { uiType: "input", value: "" },
+            { uiType: "condition", value: "" },
             { uiType: "logicalOperators", value: "" },
             ...btnsData
           ],
@@ -274,7 +278,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           [
             { uiType: "select", value: "" },
             { uiType: "comparisonPperators", value: "" },
-            { uiType: "input", value: "" },
+            { uiType: "condition", value: "" },
             { uiType: "logicalOperators", value: "" },
 
             ...btnsData
@@ -386,6 +390,14 @@ const Row = styled.div`
 
 const defaultSelectData = [
   {
+    name: "create_time",
+    dataType: "DateTime",
+    portName: "dataset",
+    alias: "create_time",
+    selected: false,
+    comment: "创建时间"
+  },
+  {
     name: "id",
     dataType: "String",
     portName: "dataset",
@@ -441,14 +453,7 @@ const defaultSelectData = [
     selected: false,
     comment: "组件简单描述"
   },
-  {
-    name: "create_time",
-    dataType: "DateTime",
-    portName: "dataset",
-    alias: "create_time",
-    selected: false,
-    comment: "创建时间"
-  },
+
   {
     name: "user_id",
     dataType: "String",
