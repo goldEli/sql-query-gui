@@ -36,7 +36,7 @@ const SelectValue: React.FC<SelectValueProps> = (props) => {
   return (
     <>
       <span style={{ fontWeight: "bold" }} onClick={() => setVisible(true)}>
-        {props.value || "<?>"}
+        {getName(props.value) || "<?>"}
       </span>
       <Modal
         title="请选择"
@@ -67,6 +67,10 @@ const SelectValue: React.FC<SelectValueProps> = (props) => {
       </Modal>
     </>
   );
+};
+
+const getName = (value: string) => {
+  return value?.split("/")?.[0];
 };
 
 const Box = styled.div`

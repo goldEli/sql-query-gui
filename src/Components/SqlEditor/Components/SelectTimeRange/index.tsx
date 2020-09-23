@@ -53,7 +53,7 @@ const SelectTimeRange: React.FC<SelectTimeRangeProps> = (props) => {
             format={timeFormat}
             onChange={(time) => {
               setValue((value) => {
-                return [time.format(timeFormat), value[1]];
+                return [time.format(timeFormat), value[1] || "00:00:00"];
               });
             }}
           />
@@ -61,7 +61,7 @@ const SelectTimeRange: React.FC<SelectTimeRangeProps> = (props) => {
             format={timeFormat}
             onChange={(time) => {
               setValue((value) => {
-                return [value[0], time.format(timeFormat)];
+                return [value[0] || "00:00:00", time.format(timeFormat)];
               });
             }}
           />
