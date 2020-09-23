@@ -66,6 +66,8 @@ export const comparisonPperatorsList = {
     { id: ">", label: "晚于" },
     { id: "!=", label: "不等于" },
     { id: "=", label: "等于" },
+    { id: "timeRange", label: "时刻范围" },
+    { id: "DateRange", label: "时间范围" },
     { id: "is null", label: "空" },
     { id: "is not null", label: "不为空" }
   ]

@@ -35,7 +35,7 @@ interface Item {
 type Data = Item[][];
 
 const defaultData = [
-  [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
+  // [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
   [{ uiType: "leftParen" }],
   [
     { uiType: "select", value: "" },
@@ -69,9 +69,9 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const addBtnInfo = (data: Data): Data => {
     return data.map((row, index) => {
-      if (index === 0) {
-        return row;
-      }
+      // if (index === 0) {
+      //   return row;
+      // }
       return [...row, ...btnsData];
     });
   };
@@ -175,11 +175,11 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     };
   };
 
-  const isLeftParan = (item: Item[]) => {
+  const isLeftParan = (item: Item[] = []) => {
     return item.some((e) => e.uiType === "leftParen");
   };
 
-  const isRightParan = (item: Item[]) => {
+  const isRightParan = (item: Item[] = []) => {
     return item.some((e) => e.uiType === "rightParen");
   };
 
@@ -248,7 +248,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const addRow = (rowNum: number) => {
     return () => {
       setData((data) => {
-        const curRow = data[rowNum];
+        // const curRow = data[rowNum];
         return [
           ...data.slice(0, rowNum + 1),
           [
@@ -267,7 +267,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const addParen = (rowNum: number) => {
     return () => {
       setData((data) => {
-        const curRow = data[rowNum];
+        // const curRow = data[rowNum];
         return [
           ...data.slice(0, rowNum + 1),
           [{ uiType: "leftParen" }, ...btnsData],
@@ -305,6 +305,13 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <Box>
+      <Btn visible onClick={addRow(-1)}>
+        +
+      </Btn>
+      <Spacer num={1} />
+      <Btn visible onClick={addParen(-1)}>
+        ( )
+      </Btn>
       <>
         {data.map((row, rowNum) => {
           const comment = row.find((item) => item.uiType === "select")?.value;
@@ -349,7 +356,8 @@ const Btn = styled.span`
   text-align: center;
   line-height: 20px;
   cursor: pointer;
-  visibility: hidden;
+  visibility: ${(props: { visible?: boolean }) =>
+    props.visible ? "visbile" : "hidden"};
 `;
 
 const Box = styled.div`
