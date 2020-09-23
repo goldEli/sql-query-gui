@@ -6,10 +6,11 @@ import LogicalOperators from "./Components/LogicalOperators";
 import ComparisonOperators from "./Components/ComparisonOperators";
 import SelectDate from "./Components/SelectDate";
 import SelectDateRange from "./Components/SelectDateRange";
+import SelectTimeRange from "./Components/SelectTimeRange";
 
 import { comparisonPperatorsList } from "./config";
 
-import { DataType, ComparisonOperatorType } from "./type";
+import { DataType } from "./type";
 import { IntsKeys, StringsKeys, TimesKeys } from "./config";
 
 interface SqlEditorProps {}
@@ -80,7 +81,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const SwitchItemUI = (props: {
     item: Item;
     dataType: DataType;
-    comparisonOperatorType: ComparisonOperatorType;
+    comparisonOperatorType: string;
     onChange: (value: string) => void;
     addRow: () => void;
     delRow: () => void;
@@ -115,6 +116,12 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
               <SelectDateRange onChange={props.onChange} value={item.value} />
             );
           }
+          if (props.comparisonOperatorType === "timeRange") {
+            return (
+              <SelectTimeRange onChange={props.onChange} value={item.value} />
+            );
+          }
+          // SelectTimeRange
           return <SelectDate onChange={props.onChange} value={item.value} />;
         }
         return <InputValue onChange={props.onChange} value={item.value} />;
