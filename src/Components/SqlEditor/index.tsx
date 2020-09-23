@@ -4,11 +4,11 @@ import InputValue from "./Components/InputValue";
 import SelectValue from "./Components/SelectValue";
 import LogicalOperators from "./Components/LogicalOperators";
 import ComparisonOperators from "./Components/ComparisonOperators";
-import SelectTime from "./Components/SelectTime";
+import SelectDate from "./Components/SelectDate";
 
 import { comparisonPperatorsList } from "./config";
 
-import { DataType } from "./type";
+import { DataType, ComparisonOperatorType } from "./type";
 import { IntsKeys, StringsKeys, TimesKeys } from "./config";
 
 interface SqlEditorProps {}
@@ -72,16 +72,14 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const addBtnInfo = (data: Data): Data => {
     return data.map((row, index) => {
-      // if (index === 0) {
-      //   return row;
-      // }
       return [...row, ...btnsData];
     });
   };
 
   const SwitchItemUI = (props: {
     item: Item;
-    dataType?: DataType;
+    dataType: DataType;
+    comparisonOperatorType: ComparisonOperatorType;
     onChange: (value: string) => void;
     addRow: () => void;
     delRow: () => void;
@@ -111,7 +109,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
       case "condition":
         if (props.dataType === "time") {
-          return <SelectTime onChange={props.onChange} value={item.value} />;
+          return <SelectDate onChange={props.onChange} value={item.value} />;
         }
         return <InputValue onChange={props.onChange} value={item.value} />;
       case "leftParen":
@@ -315,8 +313,13 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         {data.map((row, rowNum) => {
           const fieldValue = row.find((item) => item.uiType === "select")
             ?.value;
-
+          const comparisonOperatorValue = row.find(
+            (item) => item.uiType === "select"
+          )?.value;
           const dataType = getFieldType(fieldValue);
+          const comparisonOperatorType = getComparisonOperatorType(
+            comparisonOperatorValue
+          );
           const spacerNum = calSpacerNum(row);
           return (
             <Row key={rowNum.toString()}>
@@ -333,6 +336,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                         delRow={delRow(rowNum)}
                         addParen={addParen(rowNum)}
                         dataType={dataType}
+                        comparisonOperatorType={comparisonOperatorType}
                       />
                       <Spacer num={1} />
                     </>
@@ -345,6 +349,10 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       </>
     </Box>
   );
+};
+
+const getComparisonOperatorType = (value?: string) => {
+  return value?.split("/")?.[1];
 };
 
 const Btn = styled.span`

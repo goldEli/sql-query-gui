@@ -8,6 +8,8 @@ export type Strings = keyof typeof StringsKeys;
 
 export type Times = keyof typeof TimesKeys;
 
+export type ComparisonOperatorType = Ints | Strings | Times;
+
 export interface FieldInfo {
   name: string;
   dataType: string;

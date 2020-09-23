@@ -7,7 +7,7 @@ import { defautValue } from "../../config";
 
 const { Option } = Select;
 
-interface SelectTimeProps {
+interface SelectDateProps {
   value?: string;
   onChange: (value: string) => void;
   // list: string[];
@@ -15,7 +15,7 @@ interface SelectTimeProps {
 
 const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
-const SelectTime: React.FC<SelectTimeProps> = (props) => {
+const SelectDate: React.FC<SelectDateProps> = (props) => {
   const [visible, setVisible] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -69,4 +69,4 @@ const Box = styled.div`
   align-items: center;
 `;
 
-export default SelectTime;
+export default SelectDate;
