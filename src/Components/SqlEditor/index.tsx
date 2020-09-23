@@ -5,6 +5,7 @@ import SelectValue from "./Components/SelectValue";
 import LogicalOperators from "./Components/LogicalOperators";
 import ComparisonOperators from "./Components/ComparisonOperators";
 import SelectDate from "./Components/SelectDate";
+import SelectDateRange from "./Components/SelectDateRange";
 
 import { comparisonPperatorsList } from "./config";
 
@@ -109,6 +110,11 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
       case "condition":
         if (props.dataType === "time") {
+          if (props.comparisonOperatorType === "dateRange") {
+            return (
+              <SelectDateRange onChange={props.onChange} value={item.value} />
+            );
+          }
           return <SelectDate onChange={props.onChange} value={item.value} />;
         }
         return <InputValue onChange={props.onChange} value={item.value} />;
@@ -314,7 +320,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           const fieldValue = row.find((item) => item.uiType === "select")
             ?.value;
           const comparisonOperatorValue = row.find(
-            (item) => item.uiType === "select"
+            (item) => item.uiType === "comparisonPperators"
           )?.value;
           const dataType = getFieldType(fieldValue);
           const comparisonOperatorType = getComparisonOperatorType(
