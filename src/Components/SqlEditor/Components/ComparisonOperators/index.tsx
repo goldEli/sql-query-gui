@@ -36,7 +36,9 @@ const ComparisonOperators: React.FC<ComparisonOperatorsProps> = (props) => {
 
   return (
     <>
-      <span onClick={() => setVisible(true)}>{props.value || "<?>"}</span>
+      <span onClick={() => setVisible(true)}>
+        {getOperatorsName(props.value) || "<?>"}
+      </span>
       <Modal
         title="请选择"
         visible={visible}
@@ -57,7 +59,7 @@ const ComparisonOperators: React.FC<ComparisonOperatorsProps> = (props) => {
           >
             {props.list?.map((item) => (
               <Option key={item} value={item}>
-                {item}
+                {getOperatorsName(item)}
               </Option>
             ))}
           </Select>
@@ -65,6 +67,10 @@ const ComparisonOperators: React.FC<ComparisonOperatorsProps> = (props) => {
       </Modal>
     </>
   );
+};
+
+const getOperatorsName = (value?: string) => {
+  return value?.split("/")?.[0];
 };
 
 const Box = styled.div`

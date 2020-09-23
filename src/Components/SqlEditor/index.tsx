@@ -101,7 +101,7 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
             // dataType={props.dataType}
             list={
               comparisonPperatorsList[props.dataType]?.map(
-                (item) => item.label
+                (item) => `${item.label}/${item.id}`
               ) || []
             }
             onChange={props.onChange}
@@ -125,7 +125,9 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       case "select":
         return (
           <SelectValue
-            list={defaultSelectData.map((item) => item.comment)}
+            list={defaultSelectData.map(
+              (item) => `${item.comment}/${item.dataType}`
+            )}
             onChange={props.onChange}
             value={item.value}
           />
@@ -137,27 +139,20 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     }
   };
 
-  const getFieldType = (
-    comment?: string,
-    fieldData: typeof defaultSelectData
-  ): DataType | undefined => {
-    if (!comment) return void 0;
-    // comment = comment.toLocaleLowerCase()
+  const getFieldType = (fieldValue?: string): DataType | undefined => {
+    if (!fieldValue) return void 0;
+    const type = fieldValue.split("/")[1]?.toLocaleLowerCase();
 
-    for (let item of fieldData) {
-      if (item.comment === comment) {
-        const type = item.dataType.toLocaleLowerCase();
-        if (Object.values(IntsKeys).includes(type)) {
-          return "int";
-        }
-        if (Object.values(StringsKeys).includes(type)) {
-          return "string";
-        }
-        if (Object.values(TimesKeys).includes(type)) {
-          return "time";
-        }
-      }
+    if (Object.values(IntsKeys).includes(type)) {
+      return "int";
     }
+    if (Object.values(StringsKeys).includes(type)) {
+      return "string";
+    }
+    if (Object.values(TimesKeys).includes(type)) {
+      return "time";
+    }
+
     return void 0;
   };
 
@@ -318,9 +313,10 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       </Btn>
       <>
         {data.map((row, rowNum) => {
-          const comment = row.find((item) => item.uiType === "select")?.value;
+          const fieldValue = row.find((item) => item.uiType === "select")
+            ?.value;
 
-          const dataType = getFieldType(comment, defaultSelectData);
+          const dataType = getFieldType(fieldValue);
           const spacerNum = calSpacerNum(row);
           return (
             <Row key={rowNum.toString()}>
