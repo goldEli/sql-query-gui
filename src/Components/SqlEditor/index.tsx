@@ -356,6 +356,7 @@ const Btn = styled.span`
   text-align: center;
   line-height: 20px;
   cursor: pointer;
+  user-select: none;
   visibility: ${(props: { visible?: boolean }) =>
     props.visible ? "visbile" : "hidden"};
 `;
