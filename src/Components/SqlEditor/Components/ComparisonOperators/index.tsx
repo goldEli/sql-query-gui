@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Select } from "antd";
+import styled from "styled-components";
 
 import { defautValue, comparisonPperatorsList } from "../../config";
 import { DataType } from "../../type";
@@ -41,23 +42,37 @@ const ComparisonOperators: React.FC<ComparisonOperatorsProps> = (props) => {
         visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}
+        footer={null}
       >
-        <Select
-          style={{ width: "200px" }}
-          showSearch
-          autoFocus
-          value={value || defautValue}
-          onChange={(value) => setValue(value)}
-        >
-          {props.list?.map((item) => (
-            <Option key={item} value={item}>
-              {item}
-            </Option>
-          ))}
-        </Select>
+        <Box>
+          <Select
+            style={{ width: "200px" }}
+            showSearch
+            autoFocus
+            value={value || defautValue}
+            onChange={(value) => {
+              props.onChange(value);
+              setVisible(false);
+            }}
+          >
+            {props.list?.map((item) => (
+              <Option key={item} value={item}>
+                {item}
+              </Option>
+            ))}
+          </Select>
+        </Box>
       </Modal>
     </>
   );
 };
+
+const Box = styled.div`
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export default ComparisonOperators;
