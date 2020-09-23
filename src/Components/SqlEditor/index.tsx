@@ -376,6 +376,7 @@ const Btn = styled.span`
   color: #fff;
   text-align: center;
   line-height: 20px;
+  flex-shrink: 0;
   cursor: pointer;
   user-select: none;
   visibility: ${(props: { visible?: boolean }) =>
@@ -386,17 +387,21 @@ const Box = styled.div`
   width: 100%;
   min-height: 300px;
   padding: 8px;
+  overflow: auto;
+  white-space: nowrap;
 `;
 
 const Spacer = styled.span`
   display: inline-block;
   width: ${(props: { num: number }) => (props.num || 0) * 8}px;
+  flex-shrink: 0;
 `;
 
 const Row = styled.div`
   width: 100%;
   height: 30px;
   display: flex;
+  flex-shrink: 0;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
