@@ -41,20 +41,20 @@ type Data = Item[][];
 
 const defaultData = [
   // [{ uiType: "addBtn" }, { uiType: "addParenBtn" }],
-  [{ uiType: "leftParen" }],
-  [
-    { uiType: "select", value: "" },
-    { uiType: "comparisonPperators", value: "" },
-    { uiType: "condition" },
-    { uiType: "logicalOperators", value: "" }
-  ],
-  [
-    { uiType: "select", value: "" },
-    { uiType: "comparisonPperators", value: "" },
-    { uiType: "condition" },
-    { uiType: "logicalOperators", value: "" }
-  ],
-  [{ uiType: "rightParen" }]
+  // [{ uiType: "leftParen" }],
+  // [
+  //   { uiType: "select", value: "" },
+  //   { uiType: "comparisonPperators", value: "" },
+  //   { uiType: "condition" },
+  //   { uiType: "logicalOperators", value: "" }
+  // ],
+  // [
+  //   { uiType: "select", value: "" },
+  //   { uiType: "comparisonPperators", value: "" },
+  //   { uiType: "condition" },
+  //   { uiType: "logicalOperators", value: "" }
+  // ],
+  // [{ uiType: "rightParen" }]
 ];
 
 const btnsData = [
@@ -71,6 +71,13 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   React.useEffect(() => {
     setData(addBtnInfo(defaultData));
   }, []);
+
+  const setDataWithHandle = (callback: (data: Data) => Data) => {
+    setData((prev) => {
+      const ret = callback(prev);
+      return handleLogicalOperators(ret);
+    });
+  };
 
   const addBtnInfo = (data: Data): Data => {
     return data.map((row, index) => {
@@ -193,9 +200,13 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     return item.some((e) => e.uiType === "rightParen");
   };
 
+  const isHasLogicalOperators = (item: Item[] = []) => {
+    return item.some((e) => e.uiType === "logicalOperators");
+  };
+
   const delRow = (rowNum: number) => {
     return () => {
-      setData((data) => {
+      setDataWithHandle((data) => {
         const curRow = data[rowNum];
         const leftParen = isLeftParan(curRow);
         const rightParen = isRightParan(curRow);
@@ -257,9 +268,9 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const addRow = (rowNum: number) => {
     return () => {
-      setData((data) => {
+      setDataWithHandle((data) => {
         // const curRow = data[rowNum];
-        return [
+        const ret = [
           ...data.slice(0, rowNum + 1),
           [
             { uiType: "select", value: "" },
@@ -270,15 +281,16 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           ],
           ...data.slice(rowNum + 1, data.length)
         ];
+        return ret;
       });
     };
   };
 
   const addParen = (rowNum: number) => {
     return () => {
-      setData((data) => {
+      setDataWithHandle((data) => {
         // const curRow = data[rowNum];
-        return [
+        const ret = [
           ...data.slice(0, rowNum + 1),
           [{ uiType: "leftParen" }, ...btnsData],
           [
@@ -289,11 +301,69 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
             ...btnsData
           ],
-          [{ uiType: "rightParen" }, ...btnsData],
+          [
+            { uiType: "rightParen" },
+            { uiType: "logicalOperators", value: "" },
+            ...btnsData
+          ],
           ...data.slice(rowNum + 1, data.length)
         ];
+        // return ret
+        return ret;
       });
     };
+  };
+
+  const removeLogicalOperator = (row: Item[]) => {
+    return row.filter((item) => item.uiType !== "logicalOperators");
+  };
+
+  const handleLogicalOperators = (data: Data) => {
+    let map: { [key: number]: boolean } = {};
+    return data
+      .slice()
+      .reverse()
+      .map((row) => {
+        const spacerNum = calSpacerNumByReverse(row);
+        // console.log(spacerNum)
+        Object.keys(map).forEach((key) => {
+          if (parseInt(key) > spacerNum) {
+            map[key] = false;
+          }
+        });
+        if (!map[spacerNum]) {
+          map[spacerNum] = true;
+          return removeLogicalOperator(row);
+        }
+        // 还原被删掉的 logicalOperator
+        if (!isLeftParan(row) && !isHasLogicalOperators(row)) {
+          return [
+            ...row.slice(0, -3),
+            { uiType: "logicalOperators", value: "" },
+            ...btnsData
+          ];
+        }
+
+        return row;
+      })
+      .reverse();
+  };
+
+  let rightParenNum = 0;
+
+  const calSpacerNumByReverse = (item: Item[]): number => {
+    if (item.some((e) => e.uiType === "rightParen")) {
+      rightParenNum += 1;
+      return tabNum * (rightParenNum - 1);
+    }
+    if (item.some((e) => e.uiType === "leftParen")) {
+      rightParenNum -= 1;
+    }
+    if (rightParenNum > 0) {
+      return tabNum * rightParenNum;
+    }
+
+    return 0;
   };
 
   let leftParenNum = 0;
